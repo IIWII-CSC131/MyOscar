@@ -42,8 +42,8 @@ public class Sentinel
 	}
 	
 	/**
-	 * <p>Creates an array of size 16 that acts as a pathway from one data to another and is reversible.</p>
-	 * <p>Ex: If array[a] = b, then array[b] = a</p>
+	 * <p>Creates an array of size 16 that acts as a pathway from one data value to another.</p>
+	 * <p>Initializes using the method {@code array[a] = b} and {@code array[b] = a}</p>
 	 *
 	 * @return Array of size 16
 	 */
@@ -244,7 +244,7 @@ public class Sentinel
 	
 	/**
 	 * <p>Turns a hexadecimal character into an integer value</p>
-	 * <p>'0'...'f' to 0...15</p>
+	 * <p>"0"..."f" to 0...15</p>
 	 *
 	 * @param val String to work on (should only be one character)
 	 * @return Converted value as an integer
@@ -280,7 +280,7 @@ public class Sentinel
 	
 	/**
 	 * <p>Turns an integer into a hexadecimal character</p>
-	 * <p>0...15 to '0'...'f'</p>
+	 * <p>0...15 to "0"..."f"</p>
 	 *
 	 * @param val Integer to work on
 	 * @return Converted value as an character
