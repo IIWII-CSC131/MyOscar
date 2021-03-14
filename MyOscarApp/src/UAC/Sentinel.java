@@ -112,7 +112,7 @@ public class Sentinel
 	}
 	
 	/**
-	 * <p>Decrypts a line into hexadecimal</p>
+	 * <p>Decrypts a line from hexadecimal</p>
 	 *
 	 * @param line The line to decrypt in hexadecimal
 	 * @return The decrypted line
@@ -160,7 +160,7 @@ public class Sentinel
 	
 	/**
 	 * <p>Passes a value through the rotaries to decrypt it, then shifts the rotaries.</p>
-	 * <p>Value gets passed "backwards" so that the equation '{@code array[newVal] == val}' is satisfied. </p>
+	 * <p>Value gets passed "backwards" so that the statement '{@code array[newVal] == val}' is satisfied. </p>
 	 *
 	 * @param val Value to work on
 	 * @return Value after going through rotaries
