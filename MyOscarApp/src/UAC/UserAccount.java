@@ -13,7 +13,7 @@ import java.util.Scanner;
  * @author Eric Rodriguez
  * @version 1.0
  */
-public class UAC
+public class UserAccount
 {
 	/**
 	 * <p>Holds the user data for the app. Info is held like this:</p>
@@ -32,10 +32,9 @@ public class UAC
 	
 	/**
 	 * <p>Verifies the user file to be used. Program should call {@link #createNewSession()} or
-	 * {@link #createNewUser()}
-	 * afterwards.</p>
+	 * {@link #createNewUser()} afterwards.</p>
 	 */
-	public UAC()
+	public UserAccount()
 	{
 		if (!verifyFile(USERS_FILE))
 		{
@@ -47,7 +46,7 @@ public class UAC
 	 * <p>Verifies if a file exists. If it does not exist, the program will attempt to create it.</p>
 	 *
 	 * @param file The file to verify.
-	 * @return Returns true if the file exists or wax created.
+	 * @return Returns true if the file exists or was created.
 	 */
 	private boolean verifyFile(File file)
 	{
@@ -330,18 +329,32 @@ public class UAC
 		return list;
 	}
 	
+	/**
+	 * <p>Write move data into the user profile</p>
+	 * @param data The data to write
+	 */
 	public void writeMovies(ArrayList<String> data)
 	{
 		writeData(data, userLine + 2);
 	}
 	
+	/**
+	 * <p>Write preference data into the user profile</p>
+	 * @param data The data to write
+	 */
 	public void writePreferences(ArrayList<String> data)
 	{
 		writeData(data, userLine + 3);
 	}
 	
+	/**
+	 * <p>Writes the specified data to the specified line</p>
+	 * @param data The data to write.
+	 * @param line The line to write to. The whole line will be overwritten.
+	 */
 	private void writeData(ArrayList<String> data, int line)
 	{
+		// Removes any empty data
 		for (int i = 0; i < data.size(); i++)
 		{
 			if (data.get(i).trim().equals(""))
@@ -351,6 +364,7 @@ public class UAC
 			}
 		}
 		
+		// Does not write anything if the data is empty
 		if (data.isEmpty())
 		{
 			System.out.println("The data is empty");
