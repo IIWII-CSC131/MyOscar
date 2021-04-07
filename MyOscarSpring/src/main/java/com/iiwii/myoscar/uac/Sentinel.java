@@ -1,4 +1,4 @@
-package com.iiwii.myoscar.UAC;
+package com.iiwii.myoscar.uac;
 
 import java.util.Random;
 

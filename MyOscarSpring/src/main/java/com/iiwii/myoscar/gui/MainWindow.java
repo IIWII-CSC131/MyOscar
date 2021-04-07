@@ -1,7 +1,7 @@
 package com.iiwii.myoscar.gui;
 
-import com.iiwii.myoscar.UAC.Sentinel;
-import com.iiwii.myoscar.UAC.UserAccount;
+import com.iiwii.myoscar.uac.Sentinel;
+import com.iiwii.myoscar.uac.UserAccount;
 
 import javax.swing.*;
 import java.awt.*;
