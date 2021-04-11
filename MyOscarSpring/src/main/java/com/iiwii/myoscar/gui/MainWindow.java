@@ -25,8 +25,8 @@ public class MainWindow extends JFrame
 	
 	private Panels previousPanel = Panels.NIL;
 	
-	private boolean sidebarPresent = false;
-	private double  sidebarRatio   = 0.2;
+	private boolean isSidebarPresent = false;
+	private double  sidebarRatio     = 0.2;
 	
 	public MainWindow()
 	{
@@ -70,7 +70,7 @@ public class MainWindow extends JFrame
 		getContentPane().removeAll();
 		mainPanel = new MainPanel(this);
 		System.out.println(mainPanel.getWidth());
-		if (!sidebarPresent)
+		if (!isSidebarPresent)
 		{
 			initSidebar();
 		}
@@ -97,7 +97,7 @@ public class MainWindow extends JFrame
 		lay.putConstraint(SpringLayout.NORTH, sidebarPanel, 0, SpringLayout.NORTH, this);
 //		sidebarPanel.setBackground(Color.BLACK);
 //		add(sidebarPanel);
-		sidebarPresent = true;
+		isSidebarPresent = true;
 	}
 	
 	public void changePanels(Panels previousPanel, Panels nextPanel)
@@ -108,7 +108,7 @@ public class MainWindow extends JFrame
 				dispose();
 				break;
 			case LOGIN:
-				sidebarPresent = false;
+				isSidebarPresent = false;
 				showLoginPanel();
 			case MAIN:
 				showMainPanel();

@@ -17,7 +17,7 @@ public class LoginPanel extends JPanel
 	
 	private final MainWindow frame;
 	
-	private final Font FONT = new Font(Font.SANS_SERIF, Font.PLAIN, 16);
+	private final Font DEFAULT_FONT = new Font(Font.SANS_SERIF, Font.PLAIN, 16);
 	
 	private JTextField     usernameField;
 	private JPasswordField passwordField;
@@ -43,39 +43,39 @@ public class LoginPanel extends JPanel
 		setLayout(lay);
 		
 		JLabel title = new JLabel("MyOscars GUI Window");
-		title.setFont(new Font(FONT.getName(), FONT.getStyle(), 25));
+		title.setFont(new Font(DEFAULT_FONT.getName(), DEFAULT_FONT.getStyle(), 25));
 		lay.putConstraint(SpringLayout.NORTH, title, 10, SpringLayout.NORTH, this);
 		lay.putConstraint(SpringLayout.HORIZONTAL_CENTER, title, 0, SpringLayout.HORIZONTAL_CENTER, this);
 		add(title);
 		
 		JLabel usernameLabel = new JLabel("Username:");
-		usernameLabel.setFont(FONT);
+		usernameLabel.setFont(DEFAULT_FONT);
 		lay.putConstraint(SpringLayout.WEST, usernameLabel, -180, SpringLayout.HORIZONTAL_CENTER, this);
 		lay.putConstraint(SpringLayout.SOUTH, usernameLabel, -5, SpringLayout.VERTICAL_CENTER, this);
 		add(usernameLabel);
 		
 		JLabel passwordLabel = new JLabel("Password:");
-		passwordLabel.setFont(FONT);
+		passwordLabel.setFont(DEFAULT_FONT);
 		lay.putConstraint(SpringLayout.WEST, passwordLabel, -180, SpringLayout.HORIZONTAL_CENTER, this);
 		lay.putConstraint(SpringLayout.NORTH, passwordLabel, 5, SpringLayout.VERTICAL_CENTER, this);
 		add(passwordLabel);
 		
 		usernameField = new JTextField();
-		usernameField.setFont(new Font(FONT.getName(), FONT.getStyle(), 14));
+		usernameField.setFont(new Font(DEFAULT_FONT.getName(), DEFAULT_FONT.getStyle(), 14));
 		lay.putConstraint(SpringLayout.WEST, usernameField, 5, SpringLayout.EAST, usernameLabel);
 		lay.putConstraint(SpringLayout.EAST, usernameField, 180, SpringLayout.HORIZONTAL_CENTER, this);
 		lay.putConstraint(SpringLayout.VERTICAL_CENTER, usernameField, 0, SpringLayout.VERTICAL_CENTER, usernameLabel);
 		add(usernameField);
 		
 		passwordField = new JPasswordField();
-		passwordField.setFont(new Font(FONT.getName(), FONT.getStyle(), 14));
+		passwordField.setFont(new Font(DEFAULT_FONT.getName(), DEFAULT_FONT.getStyle(), 14));
 		lay.putConstraint(SpringLayout.WEST, passwordField, 0, SpringLayout.WEST, usernameField);
 		lay.putConstraint(SpringLayout.EAST, passwordField, 180, SpringLayout.HORIZONTAL_CENTER, this);
 		lay.putConstraint(SpringLayout.VERTICAL_CENTER, passwordField, 0, SpringLayout.VERTICAL_CENTER, passwordLabel);
 		add(passwordField);
 		
 		JButton loginButton = new JButton("Login");
-		loginButton.setFont(FONT);
+		loginButton.setFont(DEFAULT_FONT);
 		loginButton.addActionListener(this::loginAction);
 		lay.putConstraint(SpringLayout.WEST, loginButton, 10, SpringLayout.WEST, passwordLabel);
 		lay.putConstraint(SpringLayout.EAST, loginButton, -5, SpringLayout.HORIZONTAL_CENTER, this);
@@ -83,7 +83,7 @@ public class LoginPanel extends JPanel
 		add(loginButton);
 		
 		JButton createAccountButton = new JButton("Create Account");
-		createAccountButton.setFont(FONT);
+		createAccountButton.setFont(DEFAULT_FONT);
 		createAccountButton.addActionListener(this::createAccountAction);
 		lay.putConstraint(SpringLayout.WEST, createAccountButton, 5, SpringLayout.HORIZONTAL_CENTER, this);
 		lay.putConstraint(SpringLayout.EAST, createAccountButton, -10, SpringLayout.EAST, passwordField);
@@ -91,7 +91,7 @@ public class LoginPanel extends JPanel
 		add(createAccountButton);
 		
 		JButton guestButton = new JButton("Continue as Guest");
-		guestButton.setFont(FONT);
+		guestButton.setFont(DEFAULT_FONT);
 		guestButton.addActionListener(this::continueAsGuestAction);
 		lay.putConstraint(SpringLayout.SOUTH, guestButton, -80, SpringLayout.SOUTH, this);
 		lay.putConstraint(SpringLayout.HORIZONTAL_CENTER, guestButton, 0, SpringLayout.HORIZONTAL_CENTER, this);
@@ -99,7 +99,7 @@ public class LoginPanel extends JPanel
 		
 		//TODO: Edit the status label to allow showing errors
 		statusLabel = new JLabel();
-		statusLabel.setFont(FONT);
+		statusLabel.setFont(DEFAULT_FONT);
 		lay.putConstraint(SpringLayout.SOUTH, statusLabel, -30, SpringLayout.NORTH, usernameLabel);
 		lay.putConstraint(SpringLayout.HORIZONTAL_CENTER, statusLabel, 0, SpringLayout.HORIZONTAL_CENTER, this);
 		add(statusLabel);
@@ -174,11 +174,11 @@ public class LoginPanel extends JPanel
 	 */
 	private void displayError(UserAccount.Status status)
 	{
-		String text = "";
+		String text = "Unknown Error";
 		switch (status)
 		{
 			case OK:
-				break;
+				return;
 			case WRITE_ERROR:
 				text = "Can't write user to the file";
 				break;
