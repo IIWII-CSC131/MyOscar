@@ -13,9 +13,11 @@ import java.util.Map;
  */
 public class Movie
 {
-	private String title, genre, director, writer, actors, plot, language, country, awards, released, rated, runtime, IMDB_ID, type;
+	private String title, genre, director, writer, actors, plot, language, country, awards, released, rated, runtime,
+			IMDB_ID, type;
 	private int year, IMDB_VOTES, metascore;
 	private double IMDB_RATING;
+	
 	private Map<String, String> ratings;
 	
 	public Movie()
@@ -206,7 +208,6 @@ public class Movie
 	{
 		this.ratings = ratings;
 	}
-	
 	
 	public double getIMDB_RATING()
 	{

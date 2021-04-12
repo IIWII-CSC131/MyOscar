@@ -19,7 +19,6 @@ import java.util.Scanner;
  */
 public class OMDB_API
 {
-	private Movie  movie;
 	private String title;
 	private String type;
 	private String year;
@@ -95,6 +94,7 @@ public class OMDB_API
 	{
 		String requestURL = "https://www.omdbapi.com/?apikey=e8a0955b&t=" + title;
 		String unformattedJsonResponse = "";
+		Movie movie = new Movie();
 		
 		if (type != null && !type.equals(""))
 		{
@@ -130,9 +130,6 @@ public class OMDB_API
 			return null;
 		}
 		
-		System.out.println(movieJson);
-		
-		movie = new Movie();
 		movie.setTitle(movieJson.optString("Title"));
 		movie.setGenre(movieJson.optString("Genre"));
 		movie.setDirector(movieJson.optString("Director"));
