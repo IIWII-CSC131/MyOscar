@@ -1,9 +1,11 @@
 package com.iiwii.myoscar.controller;
 
-import com.iiwii.myoscar.models.BestActress;
+import com.iiwii.myoscar.movie_data.Oscar;
+import com.iiwii.myoscar.movie_data.OscarData;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Map;
 
@@ -20,20 +22,13 @@ public class WebController
 	/**
 	 * <p>An example method.</p>
 	 * <p>Maps this methods return to /categories/bestactress/1997</p>
-	 * @return BestActress object
+	 * @return ArrayList of Oscars
 	 */
 	@RequestMapping("/categories/bestactress/1997")
-	public BestActress bestActress()
+	public ArrayList<Oscar> bestActress()
 	{
-		BestActress ba = new BestActress();
-//		String[] actresses = {"a", "b", "c"};
-		Map<String, String> actresses = new Hashtable<>();
-		actresses.put("actress a", "mov");
-		actresses.put("actress b", "mov");
-		actresses.put("actress c", "mov");
-		actresses.put("actress d", "mov");
-		actresses.put("actress e", "mov");
-		ba.setActresses(actresses);
-		return ba;
+		OscarData.newQueryByCategory("ACTRESS");
+		OscarData.refineByYear(1997);
+		return OscarData.getResults();
 	}
 }
