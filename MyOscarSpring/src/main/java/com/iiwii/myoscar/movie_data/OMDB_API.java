@@ -143,7 +143,7 @@ public class OMDB_API
 		movie.setReleased(movieJson.optString("Released"));
 		movie.setRated(movieJson.optString("Rated"));
 		movie.setRuntime(movieJson.optString("Runtime"));
-		movie.setMetascore(Integer.parseInt(movieJson.optString("Metascore")));
+		movie.setMetaScore(Integer.parseInt(movieJson.optString("Metascore")));
 		movie.setIMDB_RATING(Double.parseDouble(movieJson.optString("imdbRating")));
 		movie.setIMDB_ID(movieJson.optString("imdbID"));
 		movie.setType(movieJson.optString("Type"));

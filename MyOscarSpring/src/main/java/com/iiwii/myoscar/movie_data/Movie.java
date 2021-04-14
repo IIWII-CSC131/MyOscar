@@ -15,7 +15,7 @@ public class Movie
 {
 	private String title, genre, director, writer, actors, plot, language, country, awards, released, rated, runtime,
 			IMDB_ID, type;
-	private int year, IMDB_VOTES, metascore;
+	private int year, IMDB_VOTES, metaScore;
 	private double IMDB_RATING;
 	
 	private Map<String, String> ratings;
@@ -37,7 +37,7 @@ public class Movie
 		ratings = null;
 		rated = "";
 		runtime = "";
-		metascore = 0;
+		metaScore = 0;
 		IMDB_RATING = 0.0;
 		IMDB_ID = "";
 		type = "";
@@ -46,7 +46,7 @@ public class Movie
 	public Movie(String title, String genre, String director, String writer, String actors,
 	             String plot, String language, String country, String awards, int year,
 	             String released, int IMDB_VOTES, Map<String, String> ratings, String IMDB_ID, String rated,
-	             String runtime, int metascore, double IMDB_RATING, String type)
+	             String runtime, int metaScore, double IMDB_RATING, String type)
 	{
 		this.title = title;
 		this.genre = genre;
@@ -64,7 +64,7 @@ public class Movie
 		this.IMDB_ID = IMDB_ID;
 		this.rated = rated;
 		this.runtime = runtime;
-		this.metascore = metascore;
+		this.metaScore = metaScore;
 		this.IMDB_RATING = IMDB_RATING;
 		this.type = type;
 	}
@@ -229,14 +229,14 @@ public class Movie
 		this.runtime = runtime;
 	}
 	
-	public int getMetascore()
+	public int getMetaScore()
 	{
-		return metascore;
+		return metaScore;
 	}
 	
-	public void setMetascore(int metascore)
+	public void setMetaScore(int metaScore)
 	{
-		this.metascore = metascore;
+		this.metaScore = metaScore;
 	}
 	
 	public String getIMDB_ID()

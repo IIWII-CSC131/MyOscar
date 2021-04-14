@@ -8,13 +8,13 @@ package com.iiwii.myoscar.movie_data;
  */
 public class Oscar
 {
-	private String  category;
-	private String  name;
-	private String  film;
-	private Boolean isWinner;
-	private int     year;
-	private int     ceremonyYear;
-	private int     ceremony;
+	private final String  category;
+	private final String  name;
+	private final String  film;
+	private final Boolean isWinner;
+	private final int     year;
+	private final int     ceremonyYear;
+	private final int     ceremony;
 	
 	public Oscar(String category, String name, String film, Boolean isWinner, int year, int ceremonyYear, int ceremony)
 	{
