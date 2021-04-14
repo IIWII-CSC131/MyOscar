@@ -25,6 +25,8 @@ public class OscarData
 	 */
 	private static ArrayList<Oscar> currentList;
 	
+	private static JSONArray oscarJson;
+	
 	/**
 	 * <p>Start a new query filtered by year.</p>
 	 *
@@ -36,10 +38,29 @@ public class OscarData
 	}
 	
 	/**
-	 * <p>Start a new query filtered by category. Uses {@code String.contains(category)} to allow compatibility for 
+	 * <p>Start a new query filtered by a range of years.</p>
+	 *
+	 * @param startYear Year to start (inclusive)
+	 * @param endYear   Year to end (inclusive)
+	 */
+	public static void newQueryByYears(int startYear, int endYear)
+	{
+		ArrayList<Oscar> tempList = new ArrayList<>();
+		
+		for (int year = startYear; year <= endYear; year++)
+		{
+			newSearch(SearchType.YEAR, String.valueOf(year));
+			tempList.addAll(currentList);
+		}
+		
+		currentList = tempList;
+	}
+	
+	/**
+	 * <p>Start a new query filtered by category. Uses {@code String.contains(category)} to allow compatibility for
 	 * slightly different named categories.</p>
 	 *
-	 * @param category  Category to filter
+	 * @param category Category to filter
 	 */
 	public static void newQueryByCategory(String category)
 	{
@@ -48,6 +69,7 @@ public class OscarData
 	
 	/**
 	 * <p>Start a new query filtered by film.</p>
+	 *
 	 * @param film Film to filter
 	 */
 	public static void newQueryByFilm(String film)
@@ -57,7 +79,8 @@ public class OscarData
 	
 	/**
 	 * <p>Start a new query filtered by Oscar winners.</p>
-	 * @param isWinner  Filter Oscar winners or non-winners
+	 *
+	 * @param isWinner Filter Oscar winners or non-winners
 	 */
 	public static void newQueryByWinner(Boolean isWinner)
 	{
@@ -66,7 +89,7 @@ public class OscarData
 	
 	/**
 	 * <p>Refine the current search by filtering search by year.</p>
-	 * 
+	 *
 	 * @param year Year to filter
 	 */
 	public static void refineByYear(int year)
@@ -75,10 +98,32 @@ public class OscarData
 	}
 	
 	/**
-	 * <p>Refine the current search by filtering search by category. Uses {@code String.contains(category)} to allow 
+	 * <p>Refine the current search by filtering search by a range of years.</p>
+	 *
+	 * @param startYear Year to start (inclusive)
+	 * @param endYear   Year to end (inclusive)
+	 */
+	public static void refineByYears(int startYear, int endYear)
+	{
+		ArrayList<Oscar> tempList = new ArrayList<>();
+		ArrayList<Oscar> originalList = currentList;
+		
+		// refine the original list and add it to the temp list
+		for (int year = startYear; year <= endYear; year++)
+		{
+			currentList = originalList;
+			refine(SearchType.YEAR, String.valueOf(year));
+			tempList.addAll(currentList);
+		}
+		
+		currentList = tempList;
+	}
+	
+	/**
+	 * <p>Refine the current search by filtering search by category. Uses {@code String.contains(category)} to allow
 	 * compatibility for slightly different named categories.</p>
-	 * 
-	 * @param category  Category to filter
+	 *
+	 * @param category Category to filter
 	 */
 	public static void refineByCategory(String category)
 	{
@@ -87,6 +132,7 @@ public class OscarData
 	
 	/**
 	 * <p>Refine the current search by filtering search by film.</p>
+	 *
 	 * @param film Film to filter
 	 */
 	public static void refineByFilm(String film)
@@ -96,7 +142,8 @@ public class OscarData
 	
 	/**
 	 * <p>Refine the current search by filtering search by Oscar winners.</p>
-	 * @param isWinner  Filter Oscar winners or non-winners
+	 *
+	 * @param isWinner Filter Oscar winners or non-winners
 	 */
 	public static void refineByWinner(Boolean isWinner)
 	{
@@ -106,20 +153,10 @@ public class OscarData
 	
 	private static void newSearch(SearchType type, String value)
 	{
-		Resource fileResource = new ClassPathResource("KaggleData_oscar_award.json");
-		String unformattedJson;
-		currentList = new ArrayList<>();
-		try
-		{
-			unformattedJson = Files.readString(Paths.get(fileResource.getURI()));
-		}
-		catch (IOException e)
-		{
-			e.printStackTrace();
-			return;
-		}
+		initializeJsonArray();
 		
-		JSONArray oscarJson = new JSONArray(unformattedJson);
+		currentList = new ArrayList<>();
+		
 		for (int i = 0; i < oscarJson.length(); i++)
 		{
 			String compare = "";
@@ -136,13 +173,14 @@ public class OscarData
 					compare = obj.optString("film");
 					break;
 				case WINNER:
-					Boolean temp = obj.optBoolean("winner");
-					compare = temp.toString();
+					boolean temp = obj.optBoolean("winner");
+					compare = Boolean.toString(temp);
 					break;
 			}
 			
-			
-			if (compare.contains(value))
+			// If compares the value of the JSON array and the search value
+			// Adds it to currentList if true
+			if (compare.toLowerCase().contains(value.toLowerCase()))
 			{
 				currentList.add(new Oscar(obj.optString("category"), obj.optString("name"),
 						obj.optString("film"), obj.optBoolean("winner"), obj.optInt("year_film"),
@@ -174,7 +212,7 @@ public class OscarData
 					break;
 			}
 			
-			if (compare.contains(value))
+			if (compare.toLowerCase().contains(value.toLowerCase()))
 			{
 				transfer.add(oscars);
 			}
@@ -185,12 +223,34 @@ public class OscarData
 	
 	public static ArrayList<Oscar> getResults()
 	{
-//		if (currentList == null)
-//		{
-//			return new ArrayList<>();
-//		}
+		if (currentList == null)
+		{
+			return new ArrayList<>();
+		}
 		
 		return currentList;
+	}
+	
+	private static void initializeJsonArray()
+	{
+		if (oscarJson != null)
+		{
+			return;
+		}
+		
+		Resource fileResource = new ClassPathResource("KaggleData_oscar_award.json");
+		String unformattedJson;
+		try
+		{
+			unformattedJson = Files.readString(Paths.get(fileResource.getURI()));
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+			return;
+		}
+		
+		oscarJson = new JSONArray(unformattedJson);
 	}
 	
 	private enum SearchType
