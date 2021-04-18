@@ -137,7 +137,7 @@ public class LoginPanel extends JPanel
 			return;
 		}
 		
-		frame.setSentinel(uac.getSentinel());
+		frame.setUserAccount(uac);
 		frame.changePanels(MainWindow.Panels.LOGIN, MainWindow.Panels.MAIN);
 	}
 	
@@ -164,7 +164,7 @@ public class LoginPanel extends JPanel
 			return;
 		}
 		
-		frame.setSentinel(uac.getSentinel());
+		frame.setUserAccount(uac);
 		frame.changePanels(MainWindow.Panels.LOGIN, MainWindow.Panels.MAIN);
 	}
 	
