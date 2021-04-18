@@ -1,6 +1,5 @@
 package com.iiwii.myoscar.gui;
 
-import com.iiwii.myoscar.uac.Sentinel;
 import com.iiwii.myoscar.uac.UserAccount;
 
 import javax.swing.*;
@@ -14,19 +13,19 @@ import java.awt.*;
  */
 public class MainWindow extends JFrame
 {
-	private Sentinel sentinel;
-	private UserAccount uac;
+	private final Dimension preferredFrameSize = new Dimension(1000, 600);
+	private final double    SIDEBAR_RATIO      = 0.2;
 	
-	SpringLayout lay;
+	public Dimension preferredPanelSize = new Dimension(990, 590);
 	
+	private UserAccount  uac;
 	private LoginPanel   loginPanel;
 	private MainPanel    mainPanel;
 	private SidebarPanel sidebarPanel;
-	
-	private Panels previousPanel = Panels.NIL;
-	
-	private boolean isSidebarPresent = false;
-	private double  sidebarRatio     = 0.2;
+	private JPanel       containerPanel;
+	private Panels       previousPanel      = Panels.NIL;
+	private boolean      isSidebarPresent   = false;
+	private boolean      isContainerPresent = false;
 	
 	public MainWindow()
 	{
@@ -38,18 +37,14 @@ public class MainWindow extends JFrame
 	 */
 	private void init()
 	{
-		// Ends the program when the window is closed. We can change this later if it suits us to run the Spring-Boot 
+		// Ends the program when the window is closed. We can change this later if it suits us to run the Spring Boot 
 		// API without the GUI also present
 		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-		setTitle("MyOscar - Spring-Boot API");
-		setPreferredSize(new Dimension(1000, 600));
-		setSize(getPreferredSize());
+		setTitle("MyOscar - Spring Boot API");
+		getContentPane().setPreferredSize(preferredFrameSize);
+		pack();
 		setLocationRelativeTo(null); // Puts the window centered on screen. It isn't perfectly centered but it's close
 		setResizable(false);
-		lay = new SpringLayout();
-		setLayout(lay);
-		
-		//TODO: Create necessary components for JFrame and JPanel 
 		
 		showLoginPanel();
 	}
@@ -57,51 +52,48 @@ public class MainWindow extends JFrame
 	/**
 	 * <p>Display the login panel</p>
 	 */
-	public void showLoginPanel()
+	private void showLoginPanel()
 	{
 		getContentPane().removeAll();
 		loginPanel = new LoginPanel(this);
-		setContentPane(loginPanel);
+		add(loginPanel, BorderLayout.CENTER);
 		repaint();
 	}
 	
-	public void showMainPanel()
+	private void showMainPanel()
 	{
-		getContentPane().removeAll();
-		mainPanel = new MainPanel(this);
-		System.out.println(mainPanel.getWidth());
+		pack();
 		if (!isSidebarPresent)
 		{
 			initSidebar();
 		}
 		
-		//TODO: Fix this, doesn't seem to be working. Maybe use a different layout manager? 
-		lay.putConstraint(SpringLayout.WEST, mainPanel, getSidebarPanelSize().width, SpringLayout.WEST, this);
-		lay.putConstraint(SpringLayout.EAST, mainPanel, 0, SpringLayout.EAST, this);
-		lay.putConstraint(SpringLayout.SOUTH, mainPanel, 0, SpringLayout.SOUTH, this);
-		lay.putConstraint(SpringLayout.NORTH, mainPanel, 0, SpringLayout.NORTH, this);
-		mainPanel.setBackground(Color.BLACK);
-		add(mainPanel);
-		repaint();
+		mainPanel = new MainPanel(this);
+//		mainPanel.setBackground(Color.BLACK); // Tester
 		
-		System.out.println(mainPanel.getWidth());
+		int containerWidth = containerPanel.getPreferredSize().width;
+		int sidebarWidth = sidebarPanel.getPreferredSize().width;
+		mainPanel.setPreferredSize(new Dimension(
+				containerWidth - sidebarWidth, containerPanel.getPreferredSize().height));
+		
+		containerPanel.add(mainPanel, BorderLayout.LINE_END);
+		EventQueue.invokeLater(containerPanel::updateUI);
 	}
 	
-	public void initSidebar()
+	private void initSidebar()
 	{
 		sidebarPanel = new SidebarPanel(this);
-		sidebarPanel.setSize(getSidebarPanelSize());
-		lay.putConstraint(SpringLayout.WEST, sidebarPanel, 0, SpringLayout.WEST, this);
-		lay.putConstraint(SpringLayout.EAST, sidebarPanel, getSidebarPanelSize().width, SpringLayout.WEST, sidebarPanel);
-		lay.putConstraint(SpringLayout.SOUTH, sidebarPanel, 0, SpringLayout.SOUTH, this);
-		lay.putConstraint(SpringLayout.NORTH, sidebarPanel, 0, SpringLayout.NORTH, this);
-//		sidebarPanel.setBackground(Color.BLACK);
-//		add(sidebarPanel);
-		isSidebarPresent = true;
+//		sidebarPanel.setBackground(Color.BLUE); // Tester
+		sidebarPanel.setPreferredSize(new Dimension((int) (containerPanel.getPreferredSize().width *
+		                                                   SIDEBAR_RATIO), containerPanel.getPreferredSize().height));
+		containerPanel.add(sidebarPanel, BorderLayout.LINE_START);
 	}
 	
 	public void changePanels(Panels previousPanel, Panels nextPanel)
 	{
+		this.previousPanel = previousPanel;
+		removeOldPanel();
+		
 		switch (nextPanel)
 		{
 			case NIL:
@@ -119,7 +111,30 @@ public class MainWindow extends JFrame
 				return;
 		}
 		
-		this.previousPanel = previousPanel;
+		if (!isContainerPresent)
+		{
+			add(containerPanel);
+			repaint();
+			isContainerPresent = true;
+		}
+	}
+	
+	private void removeOldPanel()
+	{
+		switch (previousPanel)
+		{
+			case NIL:
+				break;
+			case LOGIN:
+				remove(loginPanel);
+				initContainerPanel();
+				break;
+			case MAIN:
+				containerPanel.remove(mainPanel);
+				break;
+			case SETTINGS:
+				break;
+		}
 	}
 	
 	public void goBack()
@@ -127,20 +142,15 @@ public class MainWindow extends JFrame
 		
 	}
 	
-	public Dimension getMainPanelSize()
+	private void initContainerPanel()
 	{
-		int width = getWidth() - getSidebarPanelSize().width;
-		return new Dimension(width, getHeight());
+		containerPanel = new JPanel();
+		containerPanel.setPreferredSize(preferredPanelSize);
 	}
 	
-	public Dimension getSidebarPanelSize(){
-		int width = (int) (getWidth() * sidebarRatio);
-		return new Dimension(width, getHeight());
-	}
-	
-	public void setSentinel(Sentinel sentinel)
+	public void setUserAccount(UserAccount uac)
 	{
-		this.sentinel = sentinel;
+		this.uac = uac;
 	}
 	
 	enum Panels
