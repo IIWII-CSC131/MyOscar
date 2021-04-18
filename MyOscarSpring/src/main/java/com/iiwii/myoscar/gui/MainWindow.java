@@ -9,7 +9,7 @@ import java.awt.*;
  * <p>The main GUI window for the app.</p>
  *
  * @author Eric Rodriguez
- * @version 1.0
+ * @version 1.1
  */
 public class MainWindow extends JFrame
 {
@@ -24,6 +24,7 @@ public class MainWindow extends JFrame
 	private SidebarPanel sidebarPanel;
 	private JPanel       containerPanel;
 	private Panels       previousPanel      = Panels.NIL;
+	private Panels       currentPanel       = Panels.NIL;
 	private boolean      isSidebarPresent   = false;
 	private boolean      isContainerPresent = false;
 	
@@ -66,6 +67,7 @@ public class MainWindow extends JFrame
 		if (!isSidebarPresent)
 		{
 			initSidebar();
+			isSidebarPresent = true;
 		}
 		
 		mainPanel = new MainPanel(this);
@@ -107,9 +109,19 @@ public class MainWindow extends JFrame
 				break;
 			case SETTINGS:
 				break;
-			default:
-				return;
+			case MY_ACCOUNT:
+				break;
+			case MY_MOVIES:
+				break;
+			case MY_NOMINATIONS:
+				break;
+			case VOTES:
+				break;
+			case API:
+				break;
 		}
+		
+		currentPanel = nextPanel;
 		
 		if (!isContainerPresent)
 		{
@@ -134,18 +146,33 @@ public class MainWindow extends JFrame
 				break;
 			case SETTINGS:
 				break;
+			case MY_ACCOUNT:
+				break;
+			case MY_MOVIES:
+				break;
+			case MY_NOMINATIONS:
+				break;
+			case VOTES:
+				break;
+			case API:
+				break;
 		}
 	}
 	
 	public void goBack()
 	{
-		
+		changePanels(currentPanel, previousPanel);
 	}
 	
 	private void initContainerPanel()
 	{
 		containerPanel = new JPanel();
 		containerPanel.setPreferredSize(preferredPanelSize);
+	}
+	
+	public Panels getCurrentPanel()
+	{
+		return currentPanel;
 	}
 	
 	public void setUserAccount(UserAccount uac)
@@ -155,6 +182,6 @@ public class MainWindow extends JFrame
 	
 	enum Panels
 	{
-		NIL, LOGIN, MAIN, SETTINGS
+		NIL, LOGIN, MAIN, SETTINGS, MY_ACCOUNT, MY_MOVIES, MY_NOMINATIONS, VOTES, API
 	}
 }
