@@ -14,7 +14,7 @@ import java.util.Map;
 public class Movie
 {
 	private String title, genre, director, writer, actors, plot, language, country, awards, released, rated, runtime,
-			IMDB_ID, type;
+			IMDB_ID, type, posterLink;
 	private int year, IMDB_VOTES, metaScore;
 	private double IMDB_RATING;
 	
@@ -41,12 +41,13 @@ public class Movie
 		IMDB_RATING = 0.0;
 		IMDB_ID = "";
 		type = "";
+		posterLink = "";
 	}
 	
 	public Movie(String title, String genre, String director, String writer, String actors,
 	             String plot, String language, String country, String awards, int year,
 	             String released, int IMDB_VOTES, Map<String, String> ratings, String IMDB_ID, String rated,
-	             String runtime, int metaScore, double IMDB_RATING, String type)
+	             String runtime, int metaScore, double IMDB_RATING, String type, String posterLink)
 	{
 		this.title = title;
 		this.genre = genre;
@@ -67,6 +68,7 @@ public class Movie
 		this.metaScore = metaScore;
 		this.IMDB_RATING = IMDB_RATING;
 		this.type = type;
+		this.posterLink = posterLink;
 	}
 	
 	public String getRated()
@@ -257,5 +259,15 @@ public class Movie
 	public void setType(String type)
 	{
 		this.type = type;
+	}
+	
+	public String getPosterLink()
+	{
+		return posterLink;
+	}
+	
+	public void setPosterLink(String posterLink)
+	{
+		this.posterLink = posterLink;
 	}
 }
