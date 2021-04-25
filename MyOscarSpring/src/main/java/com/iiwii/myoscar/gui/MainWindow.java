@@ -14,7 +14,7 @@ import java.awt.*;
 public class MainWindow extends JFrame
 {
 	private final Dimension preferredFrameSize = new Dimension(1000, 600);
-	private final double    SIDEBAR_RATIO      = 0.2;
+	private final double    SIDEBAR_RATIO      = 0.16;
 	
 	public Dimension preferredPanelSize = new Dimension(990, 590);
 	
