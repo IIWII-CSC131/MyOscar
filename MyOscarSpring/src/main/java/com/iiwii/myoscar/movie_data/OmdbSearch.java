@@ -20,11 +20,6 @@ import java.util.Scanner;
  */
 public class OmdbSearch
 {
-	private static String title;
-	private static String year;
-	private static String type;
-	private static String plotLength;
-	
 	/**
 	 * <p>Get a movie from OMDB by using the title of the movie.</p>
 	 *
@@ -33,7 +28,7 @@ public class OmdbSearch
 	 */
 	public static Movie getMovie(String title)
 	{
-		return getMovie(title, 0, null, null);
+		return getMovie(title, 0, null, null, null);
 	}
 	
 	/**
@@ -45,7 +40,18 @@ public class OmdbSearch
 	 */
 	public static Movie getMovie(String title, int year)
 	{
-		return getMovie(title, year, null, null);
+		return getMovie(title, year, null, null, null);
+	}
+	
+	/**
+	 * <p>Get a movie from OMDB using an IMDB ID.</p>
+	 *
+	 * @param id The IMDB ID
+	 * @return A movie object
+	 */
+	public static Movie getMovieById(String id)
+	{
+		return getMovie(null, 0, null, null, id);
 	}
 	
 	/**
@@ -57,47 +63,47 @@ public class OmdbSearch
 	 * @param plotLength Size of plot length
 	 * @return A movie object
 	 */
-	public static Movie getMovie(String title, int year, String type, String plotLength)
+	public static Movie getMovie(String title, int year, String type, String plotLength, String id)
 	{
-		// Title is surrounded with quotation marks to allow spaces
-		String requestURL = "https://www.omdbapi.com/?apikey=e8a0955b&t=\"" + title + "\"";
-		String unformattedJsonResponse = "";
+		String requestURL;
+		JSONObject movieJson;
 		Movie movie = new Movie();
 		
-		if (type != null && !type.equals(""))
+		if (title != null)
 		{
-			requestURL += "&type=" + type;
+			// Title is surrounded with quotation marks to allow spaces
+			requestURL = "https://www.omdbapi.com/?apikey=e8a0955b&t=\"" + title + "\"";
+			
+			if (year != 0)
+			{
+				requestURL += "&y=" + year;
+			}
+			
+			if (type != null && !type.equals(""))
+			{
+				requestURL += "&type=" + type;
+			}
+			
+			if (plotLength != null && !plotLength.equals(""))
+			{
+				requestURL += "&plot=" + plotLength;
+			}
+		}
+		else
+		{
+			requestURL = "https://www.omdbapi.com/?apikey=e8a0955b&i=" + id;
 		}
 		
-		if (year != 0)
-		{
-			requestURL += "&y=" + year;
-		}
-		
-		if (plotLength != null && !plotLength.equals(""))
-		{
-			requestURL += "&plot=" + plotLength;
-		}
-		
-		try (Scanner scanner = new Scanner(new URL(requestURL).openStream(), StandardCharsets.UTF_8.toString()))
-		{
-			scanner.useDelimiter("\\A");
-			unformattedJsonResponse = scanner.hasNext() ? scanner.next() : "";
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
-			return null;
-		}
-		
-		JSONObject movieJson = new JSONObject(unformattedJsonResponse);
+		movieJson = getJsonFromUrl(requestURL);
 		
 		// Check if the returned value is valid
-		if (movieJson.isEmpty() || !movieJson.optString("Response").equals("True"))
+		if (movieJson == null || !movieJson.optString("Response", "False").equals("True"))
 		{
 			return null;
 		}
 		
+		// optString(String) allows us to request a value even if it doesn't exist. optString will, by default, 
+		// return "". 
 		movie.setTitle(movieJson.optString("Title"));
 		movie.setGenre(movieJson.optString("Genre"));
 		movie.setDirector(movieJson.optString("Director"));
@@ -107,15 +113,39 @@ public class OmdbSearch
 		movie.setLanguage(movieJson.optString("Language"));
 		movie.setCountry(movieJson.optString("Country"));
 		movie.setAwards(movieJson.optString("Awards"));
-		movie.setYear(Integer.parseInt(movieJson.optString("Year", "0")));
 		movie.setReleased(movieJson.optString("Released"));
 		movie.setRated(movieJson.optString("Rated"));
 		movie.setRuntime(movieJson.optString("Runtime"));
-		movie.setMetaScore(Integer.parseInt(movieJson.optString("Metascore", "0")));
-		movie.setIMDB_RATING(Double.parseDouble(movieJson.optString("imdbRating", "0")));
 		movie.setIMDB_ID(movieJson.optString("imdbID"));
 		movie.setType(movieJson.optString("Type"));
 		movie.setPosterLink(movieJson.optString("Poster"));
+		
+		try
+		{
+			movie.setYear(Integer.parseInt(movieJson.optString("Year", "-1")));
+		}
+		catch (Exception ignored)
+		{
+			movie.setYear(-1);
+		}
+		
+		try
+		{
+			movie.setMetaScore(Integer.parseInt(movieJson.optString("Metascore", "-1")));
+		}
+		catch (Exception ignored)
+		{
+			movie.setMetaScore(-1);
+		}
+		
+		try
+		{
+			movie.setIMDB_RATING(Double.parseDouble(movieJson.optString("imdbRating", "-1")));
+		}
+		catch (Exception ignored)
+		{
+			movie.setIMDB_RATING(-1);
+		}
 		
 		// Convert the ratings to a Map
 		HashMap<String, String> ratings = new HashMap<>();
@@ -126,11 +156,11 @@ public class OmdbSearch
 		}
 		movie.setRatings(ratings);
 		
-		// Convert the votes to an integer
+		// Convert the votes to an integer (votes use the comma notation, we need to remove that)
 		NumberFormat format = NumberFormat.getInstance(Locale.US);
 		try
 		{
-			movie.setIMDB_VOTES(Math.toIntExact((Long) format.parse(movieJson.optString("imdbVotes"))));
+			movie.setIMDB_VOTES(Math.toIntExact((Long) format.parse(movieJson.optString("imdbVotes", "-1"))));
 		}
 		catch (ParseException e)
 		{
@@ -145,28 +175,14 @@ public class OmdbSearch
 	 * <p>Searches OMDB for a movie.</p>
 	 *
 	 * @param title Title of movie to search for
-	 * @return An array list of movies
+	 * @return An array list of matching movies
 	 */
 	public static ArrayList<Movie> searchMovies(String title)
 	{
-		String requestURL = "https://www.omdbapi.com/?apikey=e8a0955b&s=\"" + title + "\"";
-		String unformattedJsonResponse = "";
-		
-		try (Scanner scanner = new Scanner(new URL(requestURL).openStream(), StandardCharsets.UTF_8.toString()))
-		{
-			scanner.useDelimiter("\\A");
-			unformattedJsonResponse = scanner.hasNext() ? scanner.next() : "";
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
-			return null;
-		}
-		
-		JSONObject searchJson = new JSONObject(unformattedJsonResponse);
+		JSONObject searchJson = getJsonFromUrl("https://www.omdbapi.com/?apikey=e8a0955b&s=\"" + title + "\"");
 		
 		// Check if the returned value is valid
-		if (searchJson.isEmpty() || !searchJson.optString("Response").equals("True"))
+		if (searchJson == null || !searchJson.optString("Response", "False").equals("True"))
 		{
 			return null;
 		}
@@ -187,21 +203,55 @@ public class OmdbSearch
 			return null;
 		}
 		
-		ArrayList<Movie> movies = new ArrayList<Movie>();
+		ArrayList<Movie> movies = new ArrayList<>();
 		JSONArray jArray = searchJson.getJSONArray("Search");
 		
-		for (int i = 0; i < results; i++)
+		// The response will only show a max of 10 movies, so we need to make sure 10 iterations is the max we will run
+		for (int i = 0; i < Math.min(10, results); i++)
 		{
 			JSONObject obj = jArray.getJSONObject(i);
 			Movie movie = new Movie();
 			movie.setTitle(obj.optString("Title"));
-			movie.setYear(Integer.parseInt(obj.optString("Year", "0")));
 			movie.setIMDB_ID(obj.optString("imdbID"));
 			movie.setType(obj.optString("Type"));
 			movie.setPosterLink(obj.optString("Poster"));
+			
+			try
+			{
+				movie.setYear(Integer.parseInt(obj.optString("Year", "-1")));
+			}
+			catch (Exception ignored)
+			{
+				movie.setYear(-1);
+			}
+			
 			movies.add(movie);
 		}
 		
 		return movies;
+	}
+	
+	/**
+	 * <p>Gets a JSON object from the passed URL</p>
+	 *
+	 * @param url URL to get JSON object from
+	 * @return A JSONObject
+	 */
+	private static JSONObject getJsonFromUrl(String url)
+	{
+		String unformattedJsonResponse;
+		
+		try (Scanner scanner = new Scanner(new URL(url).openStream(), StandardCharsets.UTF_8.toString()))
+		{
+			scanner.useDelimiter("\\A");
+			unformattedJsonResponse = scanner.hasNext() ? scanner.next() : "";
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			return null;
+		}
+		
+		return new JSONObject(unformattedJsonResponse);
 	}
 }
