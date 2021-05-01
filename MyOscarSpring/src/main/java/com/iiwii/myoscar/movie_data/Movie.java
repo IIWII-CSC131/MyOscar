@@ -1,5 +1,6 @@
 package com.iiwii.myoscar.movie_data;
 
+import java.util.ArrayList;
 import java.util.Map;
 
 /*
@@ -18,7 +19,7 @@ public class Movie
 	private int year, IMDB_VOTES, metaScore;
 	private double IMDB_RATING;
 	
-	private Map<String, String> ratings;
+	private ArrayList<String[]> ratings;
 	
 	public Movie()
 	{
@@ -46,7 +47,7 @@ public class Movie
 	
 	public Movie(String title, String genre, String director, String writer, String actors,
 	             String plot, String language, String country, String awards, int year,
-	             String released, int IMDB_VOTES, Map<String, String> ratings, String IMDB_ID, String rated,
+	             String released, int IMDB_VOTES, ArrayList<String[]> ratings, String IMDB_ID, String rated,
 	             String runtime, int metaScore, double IMDB_RATING, String type, String posterLink)
 	{
 		this.title = title;
@@ -201,12 +202,12 @@ public class Movie
 		this.IMDB_VOTES = IMDB_VOTES;
 	}
 	
-	public Map<String, String> getRatings()
+	public ArrayList<String[]> getRatings()
 	{
 		return ratings;
 	}
 	
-	public void setRatings(Map<String, String> ratings)
+	public void setRatings(ArrayList<String[]> ratings)
 	{
 		this.ratings = ratings;
 	}
