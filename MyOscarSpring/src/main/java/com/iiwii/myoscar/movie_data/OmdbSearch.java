@@ -8,7 +8,6 @@ import java.nio.charset.StandardCharsets;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Locale;
 import java.util.Scanner;
 
@@ -147,12 +146,13 @@ public class OmdbSearch
 			movie.setIMDB_RATING(-1);
 		}
 		
-		// Convert the ratings to a Map
-		HashMap<String, String> ratings = new HashMap<>();
+		// Convert ratings into an array list of string arrays
+		ArrayList<String[]> ratings = new ArrayList<>();
 		JSONArray jArray = movieJson.getJSONArray("Ratings");
 		for (int i = 0; i < jArray.length(); i++)
 		{
-			ratings.put(jArray.getJSONObject(i).optString("Value"), jArray.getJSONObject(i).optString("Source"));
+			ratings.add(new String[]{jArray.getJSONObject(i).optString("Source"),
+					jArray.getJSONObject(i).optString("Value")});
 		}
 		movie.setRatings(ratings);
 		
