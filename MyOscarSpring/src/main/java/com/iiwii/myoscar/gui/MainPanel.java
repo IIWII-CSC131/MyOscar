@@ -3,16 +3,18 @@ package com.iiwii.myoscar.gui;
 import com.iiwii.myoscar.movie_data.Movie;
 import com.iiwii.myoscar.movie_data.OmdbSearch;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.net.URL;
 import java.util.ArrayList;
-import java.util.Map;
 
 public class MainPanel extends JPanel
 {
 	private final Font DEFAULT_FONT   = new Font(Font.SANS_SERIF, Font.PLAIN, 16);
 	private final Font SEARCHBAR_FONT = new Font(Font.SANS_SERIF, Font.PLAIN, 13);
+	private final Font VIEW_FONT      = new Font(Font.SANS_SERIF, Font.PLAIN, 13);
 	
 	private MainWindow frame;
 	
@@ -37,14 +39,14 @@ public class MainPanel extends JPanel
 		moviesSearchButton.setFont(DEFAULT_FONT);
 		moviesSearchButton.addActionListener(this::moviesSearchButtonAction);
 		lay.putConstraint(SpringLayout.EAST, moviesSearchButton, -100, SpringLayout.EAST, this);
-		lay.putConstraint(SpringLayout.NORTH, moviesSearchButton, 30, SpringLayout.NORTH, this);
+		lay.putConstraint(SpringLayout.NORTH, moviesSearchButton, 10, SpringLayout.NORTH, this);
 		add(moviesSearchButton);
 		
 		JButton oscarsSearchButton = new JButton("Search");
 		oscarsSearchButton.setFont(DEFAULT_FONT);
 		oscarsSearchButton.addActionListener(this::oscarsSearchButtonAction);
 		lay.putConstraint(SpringLayout.EAST, oscarsSearchButton, 0, SpringLayout.EAST, moviesSearchButton);
-		lay.putConstraint(SpringLayout.NORTH, oscarsSearchButton, 20, SpringLayout.SOUTH, moviesSearchButton);
+		lay.putConstraint(SpringLayout.NORTH, oscarsSearchButton, 50, SpringLayout.SOUTH, moviesSearchButton);
 		add(oscarsSearchButton);
 		
 		
@@ -76,6 +78,16 @@ public class MainPanel extends JPanel
 		add(resultViewer);
 	}
 	
+	private void oscarsSearchButtonAction(ActionEvent actionEvent)
+	{
+		String text = oscarsSearchBar.getText();
+	}
+	
+	private void displayOscarResults()
+	{
+		
+	}
+	
 	private void moviesSearchButtonAction(ActionEvent actionEvent)
 	{
 		String text = moviesSearchBar.getText();
@@ -87,11 +99,6 @@ public class MainPanel extends JPanel
 		}
 		
 		displayMovieResults(movies);
-	}
-	
-	private void oscarsSearchButtonAction(ActionEvent actionEvent)
-	{
-		String text = oscarsSearchBar.getText();
 	}
 	
 	private void displayMovieResults(ArrayList<Movie> movies)
@@ -146,50 +153,95 @@ public class MainPanel extends JPanel
 		SpringLayout lay = new SpringLayout();
 		view.setLayout(lay);
 		
-		// Init all variables
-		JLabel title = new JLabel(movie.getTitle());
-		JLabel genre = new JLabel("Genre:" + movie.getGenre());
-		JLabel director = new JLabel("Director:" + movie.getDirector());
-		JLabel writer = new JLabel(movie.getWriter());
-		JLabel actors = new JLabel(movie.getActors());
-		JLabel plot = new JLabel(movie.getPlot());
-		JLabel language = new JLabel(movie.getLanguage());
-		JLabel country = new JLabel(movie.getCountry());
-		JLabel awards = new JLabel(movie.getAwards());
-		JLabel year = new JLabel(String.valueOf(movie.getYear()));
-		JLabel released = new JLabel(movie.getReleased());
-		JLabel imdbVotes = new JLabel(String.valueOf(movie.getIMDB_VOTES()));
-		JLabel rated = new JLabel(movie.getRated());
-		JLabel runtime = new JLabel(movie.getRuntime());
-		JLabel metaScore = new JLabel(String.valueOf(movie.getMetaScore()));
-		JLabel imdbRating = new JLabel(String.valueOf(movie.getIMDB_RATING()));
-		JLabel imdbId = new JLabel(movie.getIMDB_ID());
-		JLabel type = new JLabel(movie.getType());
+		// init vars
+		String title = movie.getTitle();
+		String genre = "Genres: " + movie.getGenre();
+		String director = "Directors: " + movie.getDirector();
+		String writer = "Writers: " + movie.getWriter();
+		String actors = "Actors: " + movie.getActors();
+		String plot = "Plot: " + movie.getPlot();
+		String language = "Language: " + movie.getLanguage();
+		String country = "Country: " + movie.getCountry();
+		String awards = "Awards: " + movie.getAwards();
+		String year = "Year: " + String.valueOf(movie.getYear());
+		String released = "Released: " + movie.getReleased();
+		String imdbVotes = "IMDB Votes: " + String.valueOf(movie.getIMDB_VOTES());
+		String rated = "Rated: " + movie.getRated();
+		String runtime = "Runtime: " + movie.getRuntime();
+		String metaScore = "MetaScore: " + String.valueOf(movie.getMetaScore());
+		String imdbRating = "IMDB Rating: " + String.valueOf(movie.getIMDB_RATING());
+		String imdbId = "IMDB ID: " + movie.getIMDB_ID();
+		String type = "Type: " + movie.getType();
 		String posterLink = movie.getPosterLink();
-		Map<String, String> ratings = movie.getRatings();
+		ArrayList<String[]> ratings = movie.getRatings();
 		
-		title.setFont(new Font("Calibri", DEFAULT_FONT.getStyle(), DEFAULT_FONT.getSize() + 8));
-		genre.setFont(DEFAULT_FONT);
-		director.setFont(DEFAULT_FONT);
-		writer.setFont(DEFAULT_FONT);
-		actors.setFont(DEFAULT_FONT);
-		plot.setFont(DEFAULT_FONT);
-		language.setFont(DEFAULT_FONT);
-		country.setFont(DEFAULT_FONT);
-		awards.setFont(DEFAULT_FONT);
-		year.setFont(DEFAULT_FONT);
-		released.setFont(DEFAULT_FONT);
-		imdbVotes.setFont(DEFAULT_FONT);
-		rated.setFont(DEFAULT_FONT);
-		runtime.setFont(DEFAULT_FONT);
-		metaScore.setFont(DEFAULT_FONT);
-		imdbRating.setFont(DEFAULT_FONT);
-		imdbId.setFont(DEFAULT_FONT);
-		type.setFont(DEFAULT_FONT);
+		JTextArea textArea = new JTextArea();
+		textArea.setEditable(false);
+		textArea.setFont(VIEW_FONT);
+		textArea.setLineWrap(true);
+		textArea.setWrapStyleWord(true);
+		textArea.setBackground(this.getBackground());
 		
-		lay.putConstraint(SpringLayout.HORIZONTAL_CENTER, title, 0, SpringLayout.HORIZONTAL_CENTER, view);
-		lay.putConstraint(SpringLayout.NORTH, title, 20, SpringLayout.NORTH, view);
-		view.add(title);
+		String n = "\n";
+		StringBuilder movieInfoText = new StringBuilder(year + n + released + n + type + n + country + n + genre + n +
+		                                                actors + n + director + n + writer + n + awards + n + language +
+		                                                n + rated + n + imdbVotes + n + imdbRating + n + metaScore + n +
+		                                                imdbId + n + runtime + n + plot);
+		for (String[] rating : ratings)
+		{
+			movieInfoText.append(n).append(rating[0]).append(": ").append(rating[1]);
+		}
+		
+		textArea.setText(movieInfoText.toString());
+		
+		JLabel titleLabel = new JLabel(title);
+		titleLabel.setFont(new Font(DEFAULT_FONT.getName(), DEFAULT_FONT.getStyle(), DEFAULT_FONT.getSize() + 6));
+		lay.putConstraint(SpringLayout.NORTH, titleLabel, 5, SpringLayout.NORTH, view);
+		lay.putConstraint(SpringLayout.HORIZONTAL_CENTER, titleLabel, 0, SpringLayout.HORIZONTAL_CENTER, view);
+		view.add(titleLabel);
+		
+		JScrollPane movieInfoScrollPane = new JScrollPane(textArea);
+		movieInfoScrollPane.setBorder(null);
+		lay.putConstraint(SpringLayout.WEST, movieInfoScrollPane, 0, SpringLayout.WEST, view);
+		lay.putConstraint(SpringLayout.EAST, movieInfoScrollPane, -300, SpringLayout.EAST, view);
+		lay.putConstraint(SpringLayout.NORTH, movieInfoScrollPane, 15, SpringLayout.SOUTH, titleLabel);
+		lay.putConstraint(SpringLayout.SOUTH, movieInfoScrollPane, 0, SpringLayout.SOUTH, view);
+		view.add(movieInfoScrollPane);
+		
+		// Try to put the poster image in the view
+		try
+		{
+			Image posterImage = ImageIO.read(new URL(posterLink));
+			int newX;
+			int newY;
+			double maxX = 290.0;
+			
+			// Scale the poster to fit well next to the move info
+			double mu = maxX / posterImage.getWidth(null);
+			double theta = posterImage.getHeight(null) * mu;
+			if (theta > movieInfoScrollPane.getPreferredSize().height)
+			{
+				mu = (1.0 * movieInfoScrollPane.getPreferredSize().height) / posterImage.getHeight(null);
+				newY = movieInfoScrollPane.getPreferredSize().height;
+				newX = (int) (posterImage.getWidth(null) * mu);
+			}
+			else
+			{
+				newX = (int) maxX;
+				newY = (int) theta;
+			}
+			posterImage = posterImage.getScaledInstance(newX, newY, Image.SCALE_SMOOTH);
+			
+			JLabel poster = new JLabel(new ImageIcon(posterImage));
+			lay.putConstraint(SpringLayout.VERTICAL_CENTER, poster, 0, SpringLayout.VERTICAL_CENTER,
+			                  movieInfoScrollPane);
+			lay.putConstraint(SpringLayout.EAST, poster, -10, SpringLayout.EAST, view);
+			view.add(poster);
+		}
+		catch (Exception ex)
+		{
+			ex.printStackTrace();
+		}
 		
 		view.revalidate();
 		repaint();
@@ -199,7 +251,7 @@ public class MainPanel extends JPanel
 
 /**
  * <p>Custom class to create a JTextArea that shows a hint.</p>
- * <p>Copied from StackOverflow: </p>
+ * <p>Copied from <a href="https://stackoverflow.com/a/24571681">this</a> answer on StackOverflow.</p>
  */
 class HintTextField extends JTextField
 {
