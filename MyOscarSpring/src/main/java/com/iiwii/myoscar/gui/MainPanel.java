@@ -2,6 +2,8 @@ package com.iiwii.myoscar.gui;
 
 import com.iiwii.myoscar.movie_data.Movie;
 import com.iiwii.myoscar.movie_data.OmdbSearch;
+import com.iiwii.myoscar.movie_data.Oscar;
+import com.iiwii.myoscar.movie_data.OscarData;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -10,6 +12,13 @@ import java.awt.event.ActionEvent;
 import java.net.URL;
 import java.util.ArrayList;
 
+/**
+ * <p>The main panel that first shows after logging in or continuing as guest. Allows the user to search for movies
+ * or oscar nominations</p>
+ *
+ * @author Eric Rodriguez
+ * @version 1.0
+ */
 public class MainPanel extends JPanel
 {
 	private final Font DEFAULT_FONT   = new Font(Font.SANS_SERIF, Font.PLAIN, 16);
@@ -21,7 +30,11 @@ public class MainPanel extends JPanel
 	private JPanel        view;
 	private JScrollPane   resultViewer;
 	private HintTextField moviesSearchBar;
-	private HintTextField oscarsSearchBar;
+	private HintTextField oscarsYearStart;
+	private HintTextField oscarsYearStop;
+	private HintTextField oscarsFilmSearch;
+	private HintTextField oscarsCategorySeach;
+	private JCheckBox     oscarsWinnerCheckBox;
 	
 	public MainPanel(MainWindow frame)
 	{
@@ -51,6 +64,8 @@ public class MainPanel extends JPanel
 		
 		
 		// Search bars
+		
+		// Movie search bar
 		moviesSearchBar = new HintTextField("Search for a movie", SEARCHBAR_FONT);
 		moviesSearchBar.setFont(SEARCHBAR_FONT);
 		lay.putConstraint(SpringLayout.WEST, moviesSearchBar, 100, SpringLayout.WEST, this);
@@ -59,38 +74,192 @@ public class MainPanel extends JPanel
 		lay.putConstraint(SpringLayout.EAST, moviesSearchBar, -30, SpringLayout.WEST, moviesSearchButton);
 		add(moviesSearchBar);
 		
-		
-		oscarsSearchBar = new HintTextField("Search for Oscar nominations", SEARCHBAR_FONT);
-		oscarsSearchBar.setFont(SEARCHBAR_FONT);
-		lay.putConstraint(SpringLayout.WEST, oscarsSearchBar, 0, SpringLayout.WEST, moviesSearchBar);
-		lay.putConstraint(SpringLayout.VERTICAL_CENTER, oscarsSearchBar, 0, SpringLayout.VERTICAL_CENTER,
+		// Oscar search bars
+		oscarsYearStart = new HintTextField("Start year", SEARCHBAR_FONT);
+		oscarsYearStart.setFont(SEARCHBAR_FONT);
+		lay.putConstraint(SpringLayout.WEST, oscarsYearStart, 0, SpringLayout.WEST, moviesSearchBar);
+		lay.putConstraint(SpringLayout.VERTICAL_CENTER, oscarsYearStart, 0, SpringLayout.VERTICAL_CENTER,
 		                  oscarsSearchButton);
-		lay.putConstraint(SpringLayout.EAST, oscarsSearchBar, 0, SpringLayout.EAST, moviesSearchBar);
-		add(oscarsSearchBar);
+		lay.putConstraint(SpringLayout.EAST, oscarsYearStart, 90, SpringLayout.WEST, oscarsYearStart);
+		add(oscarsYearStart);
+		
+		oscarsYearStop = new HintTextField("Stop year (leave blank for only 1 year)", SEARCHBAR_FONT);
+		oscarsYearStop.setFont(SEARCHBAR_FONT);
+		lay.putConstraint(SpringLayout.WEST, oscarsYearStop, 10, SpringLayout.EAST, oscarsYearStart);
+		lay.putConstraint(SpringLayout.VERTICAL_CENTER, oscarsYearStop, 0, SpringLayout.VERTICAL_CENTER,
+		                  oscarsYearStart);
+		lay.putConstraint(SpringLayout.EAST, oscarsYearStop, 240, SpringLayout.WEST, oscarsYearStop);
+		add(oscarsYearStop);
+		
+		oscarsFilmSearch = new HintTextField("Search by film", SEARCHBAR_FONT);
+		oscarsFilmSearch.setFont(SEARCHBAR_FONT);
+		lay.putConstraint(SpringLayout.WEST, oscarsFilmSearch, 0, SpringLayout.WEST, oscarsYearStart);
+		lay.putConstraint(SpringLayout.SOUTH, oscarsFilmSearch, -10, SpringLayout.NORTH, oscarsYearStart);
+		lay.putConstraint(SpringLayout.EAST, oscarsFilmSearch, -5, SpringLayout.HORIZONTAL_CENTER, moviesSearchBar);
+		add(oscarsFilmSearch);
+		
+		oscarsCategorySeach = new HintTextField("Search by category", SEARCHBAR_FONT);
+		oscarsCategorySeach.setFont(SEARCHBAR_FONT);
+		lay.putConstraint(SpringLayout.WEST, oscarsCategorySeach, 5, SpringLayout.HORIZONTAL_CENTER, moviesSearchBar);
+		lay.putConstraint(SpringLayout.SOUTH, oscarsCategorySeach, -10, SpringLayout.NORTH, oscarsYearStart);
+		lay.putConstraint(SpringLayout.EAST, oscarsCategorySeach, 0, SpringLayout.EAST, moviesSearchBar);
+		add(oscarsCategorySeach);
+		
+		JLabel winnerLabel = new JLabel("Only winners:");
+		winnerLabel.setFont(SEARCHBAR_FONT);
+		lay.putConstraint(SpringLayout.WEST, winnerLabel, 10, SpringLayout.EAST, oscarsYearStop);
+		lay.putConstraint(SpringLayout.VERTICAL_CENTER, winnerLabel, 0, SpringLayout.VERTICAL_CENTER, oscarsYearStop);
+//		add(winnerLabel);
+		
+		oscarsWinnerCheckBox = new JCheckBox("Only winners");
+		oscarsWinnerCheckBox.setFont(SEARCHBAR_FONT);
+		lay.putConstraint(SpringLayout.WEST, oscarsWinnerCheckBox, 10, SpringLayout.EAST, oscarsYearStop);
+		lay.putConstraint(SpringLayout.VERTICAL_CENTER, oscarsWinnerCheckBox, 0, SpringLayout.VERTICAL_CENTER,
+		                  oscarsYearStop);
+		add(oscarsWinnerCheckBox);
 		
 		view = new JPanel();
 		resultViewer = new JScrollPane(view);
 		resultViewer.setBorder(null);
-		lay.putConstraint(SpringLayout.WEST, resultViewer, -75, SpringLayout.WEST, oscarsSearchBar);
+		lay.putConstraint(SpringLayout.WEST, resultViewer, -75, SpringLayout.WEST, oscarsYearStart);
 		lay.putConstraint(SpringLayout.EAST, resultViewer, 75, SpringLayout.EAST, oscarsSearchButton);
-		lay.putConstraint(SpringLayout.NORTH, resultViewer, 20, SpringLayout.SOUTH, oscarsSearchBar);
+		lay.putConstraint(SpringLayout.NORTH, resultViewer, 20, SpringLayout.SOUTH, oscarsYearStart);
 		lay.putConstraint(SpringLayout.SOUTH, resultViewer, -20, SpringLayout.SOUTH, this);
 		add(resultViewer);
 	}
 	
 	private void oscarsSearchButtonAction(ActionEvent actionEvent)
 	{
-		String text = oscarsSearchBar.getText();
+		boolean initialQuery = true;
+		String film = oscarsFilmSearch.getText();
+		String category = oscarsCategorySeach.getText();
+		String yearStart = oscarsYearStart.getText();
+		String yearEnd = oscarsYearStop.getText();
+		boolean winnerOnly = oscarsWinnerCheckBox.isSelected();
+		
+		if (film.length() > 2)
+		{
+			OscarData.newQueryByFilm(film);
+			initialQuery = false;
+		}
+		
+		if (category.length() > 2)
+		{
+			if (initialQuery)
+			{
+				OscarData.newQueryByCategory(category);
+				initialQuery = false;
+			}
+			else
+			{
+				OscarData.refineByCategory(category);
+			}
+		}
+		
+		if (yearStart.length() == 4 && yearEnd.length() == 4)
+		{
+			if (initialQuery)
+			{
+				try
+				{
+					OscarData.newQueryByYears(Integer.parseInt(yearStart), Integer.parseInt(yearEnd));
+					initialQuery = false;
+				}
+				catch (Exception ex)
+				{
+					ex.printStackTrace();
+				}
+			}
+			else
+			{
+				try
+				{
+					OscarData.refineByYears(Integer.parseInt(yearStart), Integer.parseInt(yearEnd));
+				}
+				catch (Exception ex)
+				{
+					ex.printStackTrace();
+				}
+			}
+		}
+		
+		else if (yearStart.length() == 4)
+		{
+			if (initialQuery)
+			{
+				try
+				{
+					OscarData.newQueryByYear(Integer.parseInt(yearStart));
+					initialQuery = false;
+				}
+				catch (Exception ex)
+				{
+					ex.printStackTrace();
+				}
+			}
+			else
+			{
+				try
+				{
+					OscarData.refineByYear(Integer.parseInt(yearStart));
+				}
+				catch (Exception ex)
+				{
+					ex.printStackTrace();
+				}
+			}
+		}
+		
+		if (winnerOnly)
+		{
+			if (initialQuery)
+			{
+				OscarData.newQueryByWinner(true);
+			}
+			else 
+			{
+				OscarData.refineByWinner(true);
+			}
+		}
+		
+		displayOscarResults(OscarData.getResults());
 	}
 	
-	private void displayOscarResults()
+	private void displayOscarResults(ArrayList<Oscar> oscars)
 	{
+		view.removeAll();
+		view.setLayout(new GridBagLayout());
+		GridBagConstraints gbc = new GridBagConstraints();
+		gbc.insets = new Insets(10, 10, 10, 10);
 		
+		JLabel oscarInfo;
+		for (int i = 0; i < oscars.size(); i++)
+		{
+			Oscar oscar = oscars.get(i);
+			String info = "<html>Category: " + oscar.getCategory() + "<br/>Name: " + oscar.getName() + "<br/>Film: " +
+			              oscar.getFilm() + " (" + oscar.getYear() + ") <br/>Winner: " + oscar.getIsWinner() +
+			              "<br/>Ceremony: " + oscar.getCeremony() + " (" + oscar.getCeremonyYear() + ")";
+			oscarInfo = new JLabel(info);
+			oscarInfo.setFont(VIEW_FONT);
+			gbc.gridy = i;
+			
+			view.add(oscarInfo, gbc);
+		}
+		
+		view.revalidate();
+		repaint();
+		revalidate();
 	}
 	
 	private void moviesSearchButtonAction(ActionEvent actionEvent)
 	{
 		String text = moviesSearchBar.getText();
+		
+		if (text.length() < 2)
+		{
+			return;
+		}
+		
 		ArrayList<Movie> movies = OmdbSearch.searchMovies(text);
 		
 		if (movies == null || movies.size() == 0)
