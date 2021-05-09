@@ -88,9 +88,18 @@ public class OmdbSearch
 				requestURL += "&plot=" + plotLength;
 			}
 		}
-		else
+		else if (id != null)
 		{
 			requestURL = "https://www.omdbapi.com/?apikey=e8a0955b&i=" + id;
+			
+			if (plotLength != null && !plotLength.equals(""))
+			{
+				requestURL += "&plot=" + plotLength;
+			}
+		}
+		else 
+		{
+			return null;
 		}
 		
 		movieJson = getJsonFromUrl(requestURL);
