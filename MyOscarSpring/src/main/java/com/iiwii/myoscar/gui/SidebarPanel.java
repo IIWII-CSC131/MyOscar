@@ -10,7 +10,7 @@ public class SidebarPanel extends JPanel
 	
 	private final MainWindow frame;
 	
-	private final Font DEFAULT_FONT = new Font(Font.SANS_SERIF, Font.PLAIN, 16);
+	private final Font DEFAULT_FONT  = new Font(Font.SANS_SERIF, Font.PLAIN, 16);
 	private final Font SELECTED_FONT = new Font(Font.SANS_SERIF, Font.BOLD, 16);
 	
 	private JLabel mainPanelLabel;
@@ -45,7 +45,8 @@ public class SidebarPanel extends JPanel
 		mainPanelLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		lay.putConstraint(SpringLayout.NORTH, mainPanelLabel, 10, SpringLayout.NORTH, this);
 		lay.putConstraint(SpringLayout.WEST, mainPanelLabel, 20, SpringLayout.WEST, this);
-		mainPanelLabel.addMouseListener(new MouseAdapter() {
+		mainPanelLabel.addMouseListener(new MouseAdapter()
+		{
 			@Override public void mouseClicked(MouseEvent e)
 			{
 				super.mouseClicked(e);
@@ -56,7 +57,8 @@ public class SidebarPanel extends JPanel
 		myAccountLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		lay.putConstraint(SpringLayout.NORTH, myAccountLabel, 10, SpringLayout.SOUTH, mainPanelLabel);
 		lay.putConstraint(SpringLayout.WEST, myAccountLabel, 0, SpringLayout.WEST, mainPanelLabel);
-		myAccountLabel.addMouseListener(new MouseAdapter() {
+		myAccountLabel.addMouseListener(new MouseAdapter()
+		{
 			@Override public void mouseClicked(MouseEvent e)
 			{
 				super.mouseClicked(e);
@@ -67,7 +69,8 @@ public class SidebarPanel extends JPanel
 		settingsLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		lay.putConstraint(SpringLayout.NORTH, settingsLabel, 10, SpringLayout.SOUTH, myAccountLabel);
 		lay.putConstraint(SpringLayout.WEST, settingsLabel, 0, SpringLayout.WEST, mainPanelLabel);
-		settingsLabel.addMouseListener(new MouseAdapter() {
+		settingsLabel.addMouseListener(new MouseAdapter()
+		{
 			@Override public void mouseClicked(MouseEvent e)
 			{
 				super.mouseClicked(e);
@@ -78,7 +81,8 @@ public class SidebarPanel extends JPanel
 		myMoviesLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		lay.putConstraint(SpringLayout.NORTH, myMoviesLabel, 10, SpringLayout.SOUTH, settingsLabel);
 		lay.putConstraint(SpringLayout.WEST, myMoviesLabel, 0, SpringLayout.WEST, mainPanelLabel);
-		myMoviesLabel.addMouseListener(new MouseAdapter() {
+		myMoviesLabel.addMouseListener(new MouseAdapter()
+		{
 			@Override public void mouseClicked(MouseEvent e)
 			{
 				super.mouseClicked(e);
@@ -89,7 +93,8 @@ public class SidebarPanel extends JPanel
 		myNominationsLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		lay.putConstraint(SpringLayout.NORTH, myNominationsLabel, 10, SpringLayout.SOUTH, myMoviesLabel);
 		lay.putConstraint(SpringLayout.WEST, myNominationsLabel, 0, SpringLayout.WEST, mainPanelLabel);
-		myNominationsLabel.addMouseListener(new MouseAdapter() {
+		myNominationsLabel.addMouseListener(new MouseAdapter()
+		{
 			@Override public void mouseClicked(MouseEvent e)
 			{
 				super.mouseClicked(e);
@@ -100,7 +105,8 @@ public class SidebarPanel extends JPanel
 		myVotesLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		lay.putConstraint(SpringLayout.NORTH, myVotesLabel, 10, SpringLayout.SOUTH, myNominationsLabel);
 		lay.putConstraint(SpringLayout.WEST, myVotesLabel, 0, SpringLayout.WEST, mainPanelLabel);
-		myVotesLabel.addMouseListener(new MouseAdapter() {
+		myVotesLabel.addMouseListener(new MouseAdapter()
+		{
 			@Override public void mouseClicked(MouseEvent e)
 			{
 				super.mouseClicked(e);
@@ -111,7 +117,8 @@ public class SidebarPanel extends JPanel
 		apiLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		lay.putConstraint(SpringLayout.NORTH, apiLabel, 10, SpringLayout.SOUTH, myVotesLabel);
 		lay.putConstraint(SpringLayout.WEST, apiLabel, 0, SpringLayout.WEST, mainPanelLabel);
-		apiLabel.addMouseListener(new MouseAdapter() {
+		apiLabel.addMouseListener(new MouseAdapter()
+		{
 			@Override public void mouseClicked(MouseEvent e)
 			{
 				super.mouseClicked(e);
@@ -131,7 +138,8 @@ public class SidebarPanel extends JPanel
 		add(apiLabel);
 	}
 	
-	private void resetLabels() {
+	private void resetLabels()
+	{
 		mainPanelLabel.setFont(DEFAULT_FONT);
 		myAccountLabel.setFont(DEFAULT_FONT);
 		settingsLabel.setFont(DEFAULT_FONT);
@@ -141,13 +149,15 @@ public class SidebarPanel extends JPanel
 		apiLabel.setFont(DEFAULT_FONT);
 	}
 	
-	private void mainPanelLabelAction() {
+	private void mainPanelLabelAction()
+	{
 		resetLabels();
 		mainPanelLabel.setFont(SELECTED_FONT);
 //		frame.changePanels(frame.getCurrentPanel(), MainWindow.Panels.MAIN);
 	}
 	
-	private void myAccountLabelAction() {
+	private void myAccountLabelAction()
+	{
 		resetLabels();
 		myAccountLabel.setFont(SELECTED_FONT);
 //		frame.changePanels(frame.getCurrentPanel(), MainWindow.Panels.MY_ACCOUNT);
