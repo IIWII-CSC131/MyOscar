@@ -1,5 +1,6 @@
-package com.iiwii.endpoints;
+package com.iiwii.myoscar.controller;
 
+import com.iiwii.myoscar.models.Endpoints;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import com.iiwii.myoscar.movie_data.Oscar;
@@ -29,7 +30,7 @@ public class EndpointController {
 	// eg. /movies/categories/bestpicture/year/1997?year=1950
 	@GetMapping("/categories/bestactress")
 	public Endpoints bestActress(@RequestParam(value = "year",
-	defaultValue = "1997") int year) {		
+	                                           defaultValue = "1997") int year) {		
 		ArrayList<String> names = new ArrayList<String>(); 
 		OscarData.newQueryByCategory("ACTRESS");
 		OscarData.refineByYear(year);

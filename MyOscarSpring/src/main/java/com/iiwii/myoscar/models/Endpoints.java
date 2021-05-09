@@ -1,4 +1,4 @@
-package com.iiwii.endpoints;
+package com.iiwii.myoscar.models;
 
 import java.util.ArrayList;
 
