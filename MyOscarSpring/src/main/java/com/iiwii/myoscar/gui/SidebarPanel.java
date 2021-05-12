@@ -5,6 +5,12 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
+/**
+ * <p>The sidebar panel allows us to navigate the app without clogging up space in the main panels</p>
+ *
+ * @author Eric Rodriguez
+ * @version 1.0
+ */
 public class SidebarPanel extends JPanel
 {
 	
@@ -153,7 +159,7 @@ public class SidebarPanel extends JPanel
 	{
 		resetLabels();
 		mainPanelLabel.setFont(SELECTED_FONT);
-//		frame.changePanels(frame.getCurrentPanel(), MainWindow.Panels.MAIN);
+		frame.changePanels(frame.getCurrentPanel(), MainWindow.Panels.MAIN);
 	}
 	
 	private void myAccountLabelAction()
@@ -174,6 +180,7 @@ public class SidebarPanel extends JPanel
 	{
 		resetLabels();
 		myMoviesLabel.setFont(SELECTED_FONT);
+		frame.changePanels(frame.getCurrentPanel(), MainWindow.Panels.MY_MOVIES);
 	}
 	
 	private void myNominationsLabelAction()

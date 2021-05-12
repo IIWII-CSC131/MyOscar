@@ -18,15 +18,17 @@ public class MainWindow extends JFrame
 	
 	public Dimension preferredPanelSize = new Dimension(990, 590);
 	
-	private UserAccount  uac;
-	private LoginPanel   loginPanel;
-	private MainPanel    mainPanel;
-	private SidebarPanel sidebarPanel;
-	private JPanel       containerPanel;
-	private Panels       previousPanel      = Panels.NIL;
-	private Panels       currentPanel       = Panels.NIL;
-	private boolean      isSidebarPresent   = false;
-	private boolean      isContainerPresent = false;
+	private UserAccount   uac;
+	private LoginPanel    loginPanel;
+	private MainPanel     mainPanel;
+	private SidebarPanel  sidebarPanel;
+	private MyMoviesPanel myMoviesPanel;
+	private JPanel        containerPanel;
+	
+	private Panels  previousPanel      = Panels.NIL;
+	private Panels  currentPanel       = Panels.NIL;
+	private boolean isSidebarPresent   = false;
+	private boolean isContainerPresent = false;
 	
 	public MainWindow()
 	{
@@ -71,7 +73,6 @@ public class MainWindow extends JFrame
 		}
 		
 		mainPanel = new MainPanel(this);
-//		mainPanel.setBackground(Color.BLACK); // Tester
 		
 		int containerWidth = containerPanel.getPreferredSize().width;
 		int sidebarWidth = sidebarPanel.getPreferredSize().width;
@@ -85,10 +86,22 @@ public class MainWindow extends JFrame
 	private void initSidebar()
 	{
 		sidebarPanel = new SidebarPanel(this);
-//		sidebarPanel.setBackground(Color.BLUE); // Tester
 		sidebarPanel.setPreferredSize(new Dimension((int) (containerPanel.getPreferredSize().width *
 		                                                   SIDEBAR_RATIO), containerPanel.getPreferredSize().height));
 		containerPanel.add(sidebarPanel, BorderLayout.LINE_START);
+	}
+	
+	private void showMyMoviesPanel()
+	{
+		myMoviesPanel = new MyMoviesPanel(this);
+		
+		int containerWidth = containerPanel.getPreferredSize().width;
+		int sidebarWidth = sidebarPanel.getPreferredSize().width;
+		myMoviesPanel.setPreferredSize(new Dimension(
+				containerWidth - sidebarWidth, containerPanel.getPreferredSize().height));
+		
+		containerPanel.add(myMoviesPanel, BorderLayout.LINE_END);
+		EventQueue.invokeLater(containerPanel::updateUI);
 	}
 	
 	public void changePanels(Panels previousPanel, Panels nextPanel)
@@ -112,6 +125,7 @@ public class MainWindow extends JFrame
 			case MY_ACCOUNT:
 				break;
 			case MY_MOVIES:
+				showMyMoviesPanel();
 				break;
 			case MY_NOMINATIONS:
 				break;
@@ -149,6 +163,7 @@ public class MainWindow extends JFrame
 			case MY_ACCOUNT:
 				break;
 			case MY_MOVIES:
+				containerPanel.remove(myMoviesPanel);
 				break;
 			case MY_NOMINATIONS:
 				break;
@@ -173,6 +188,11 @@ public class MainWindow extends JFrame
 	public Panels getCurrentPanel()
 	{
 		return currentPanel;
+	}
+	
+	public UserAccount getUserAccount()
+	{
+		return uac;
 	}
 	
 	public void setUserAccount(UserAccount uac)

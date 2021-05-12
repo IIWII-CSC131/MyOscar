@@ -300,6 +300,14 @@ public class UserAccount
 	}
 	
 	/**
+	 * <p>Clears the movies line and puts an empty array.</p>
+	 */
+	public void clearMovies()
+	{
+		writeToFile("[]", userLine + 2);
+	}
+	
+	/**
 	 * <p>Write preference data into the user profile</p>
 	 *
 	 * @param data The data to write
@@ -386,7 +394,7 @@ public class UserAccount
 	}
 	
 	/**
-	 * <p>Writes a a string into the user file. The line will get replaced, and as such cannot be appended.</p>
+	 * <p>Writes a string into the user file. The line will get replaced, and as such cannot be appended.</p>
 	 * <p>This method can theoretically write multiple lines instead of replacing one line by using {@code "\n"} but
 	 * this is not recommended.</p>
 	 *
