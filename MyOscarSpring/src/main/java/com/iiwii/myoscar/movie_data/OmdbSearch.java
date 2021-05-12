@@ -188,6 +188,12 @@ public class OmdbSearch
 	 */
 	public static ArrayList<Movie> searchMovies(String title)
 	{
+		// Replace spaces with '%20' 
+		while (title.contains(" "))
+		{
+			title = title.substring(0, title.indexOf(" ")) + "%20" + title.substring(title.indexOf(" ") + 1);
+		}
+		
 		JSONObject searchJson = getJsonFromUrl("https://www.omdbapi.com/?apikey=e8a0955b&s=\"" + title + "\"");
 		
 		// Check if the returned value is valid
