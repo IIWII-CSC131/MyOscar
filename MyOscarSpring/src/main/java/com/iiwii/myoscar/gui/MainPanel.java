@@ -25,10 +25,9 @@ public class MainPanel extends JPanel
 	private final Font SEARCHBAR_FONT = new Font(Font.SANS_SERIF, Font.PLAIN, 13);
 	private final Font VIEW_FONT      = new Font(Font.SANS_SERIF, Font.PLAIN, 13);
 	
-	private MainWindow frame;
+	private final MainWindow frame;
 	
 	private JPanel        view;
-	private JScrollPane   resultViewer;
 	private HintTextField moviesSearchBar;
 	private HintTextField oscarsYearStart;
 	private HintTextField oscarsYearStop;
@@ -119,7 +118,7 @@ public class MainPanel extends JPanel
 		add(oscarsWinnerCheckBox);
 		
 		view = new JPanel();
-		resultViewer = new JScrollPane(view);
+		JScrollPane resultViewer = new JScrollPane(view);
 		resultViewer.setBorder(null);
 		lay.putConstraint(SpringLayout.WEST, resultViewer, -75, SpringLayout.WEST, oscarsYearStart);
 		lay.putConstraint(SpringLayout.EAST, resultViewer, 75, SpringLayout.EAST, oscarsSearchButton);
@@ -363,9 +362,25 @@ public class MainPanel extends JPanel
 		
 		textArea.setText(movieInfoText.toString());
 		
+		JButton addToProfileButton = new JButton("Add to 'My Movies'");
+		addToProfileButton.setFont(VIEW_FONT);
+		addToProfileButton.addActionListener(this::addToProfileButtonAction);
+		addToProfileButton.setActionCommand(movie.getIMDB_ID());
+		lay.putConstraint(SpringLayout.NORTH, addToProfileButton, 0, SpringLayout.NORTH, view);
+		lay.putConstraint(SpringLayout.WEST, addToProfileButton, 0, SpringLayout.WEST, view);
+		view.add(addToProfileButton);
+		
+		JButton openUrlButton = new JButton("Open in IMDB");
+		openUrlButton.setFont(VIEW_FONT);
+		openUrlButton.setActionCommand(movie.getIMDB_ID());
+		openUrlButton.addActionListener(this::openUrlButtonAction);
+		lay.putConstraint(SpringLayout.BASELINE, openUrlButton, 0, SpringLayout.BASELINE, addToProfileButton);
+		lay.putConstraint(SpringLayout.EAST, openUrlButton, 0, SpringLayout.EAST, view);
+		view.add(openUrlButton);
+		
 		JLabel titleLabel = new JLabel(title);
 		titleLabel.setFont(new Font(DEFAULT_FONT.getName(), DEFAULT_FONT.getStyle(), DEFAULT_FONT.getSize() + 6));
-		lay.putConstraint(SpringLayout.NORTH, titleLabel, 5, SpringLayout.NORTH, view);
+		lay.putConstraint(SpringLayout.SOUTH, titleLabel, 0, SpringLayout.SOUTH, addToProfileButton);
 		lay.putConstraint(SpringLayout.HORIZONTAL_CENTER, titleLabel, 0, SpringLayout.HORIZONTAL_CENTER, view);
 		view.add(titleLabel);
 		
@@ -383,7 +398,7 @@ public class MainPanel extends JPanel
 			Image posterImage = ImageIO.read(new URL(posterLink));
 			int newX;
 			int newY;
-			double maxX = 290.0;
+			double maxX = 295.0;
 			
 			// Scale the poster to fit well next to the move info
 			double mu = maxX / posterImage.getWidth(null);
@@ -404,7 +419,7 @@ public class MainPanel extends JPanel
 			JLabel poster = new JLabel(new ImageIcon(posterImage));
 			lay.putConstraint(SpringLayout.VERTICAL_CENTER, poster, 0, SpringLayout.VERTICAL_CENTER,
 			                  movieInfoScrollPane);
-			lay.putConstraint(SpringLayout.EAST, poster, -10, SpringLayout.EAST, view);
+			lay.putConstraint(SpringLayout.EAST, poster, -5, SpringLayout.EAST, view);
 			view.add(poster);
 		}
 		catch (Exception ex)
@@ -415,6 +430,40 @@ public class MainPanel extends JPanel
 		view.revalidate();
 		repaint();
 		revalidate();
+	}
+	
+	private void openUrlButtonAction(ActionEvent actionEvent)
+	{
+		try {
+			java.awt.Desktop.getDesktop().browse(java.net.URI.create("https://www.imdb.com/title/" + actionEvent.getActionCommand() + "/"));
+		}
+		catch (java.io.IOException e) {
+			System.out.println(e.getMessage());
+		}
+	}
+	
+	private void addToProfileButtonAction(ActionEvent actionEvent)
+	{
+		if (frame.getUserAccount() == null)
+		{
+			return;
+		}
+		
+		ArrayList<String> movies = frame.getUserAccount().getMovies();
+		
+		// Checks if the movie already exists on the account
+		for (String movie : movies)
+		{
+			if (movie.equals(actionEvent.getActionCommand()))
+			{
+				return;
+			}
+		}
+		
+		// Adds the movie to the account if it does not exist
+		movies.add(actionEvent.getActionCommand());
+		
+		frame.getUserAccount().writeMovies(movies);
 	}
 }
 
