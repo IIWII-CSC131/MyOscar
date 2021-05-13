@@ -1,115 +1,155 @@
 package com.iiwii.myoscar.controller;
 
 import com.iiwii.myoscar.models.Endpoints;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import com.iiwii.myoscar.movie_data.Oscar;
 import com.iiwii.myoscar.movie_data.OscarData;
 import java.util.ArrayList;
 import java.util.ListIterator;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 
 /**
- * 
+ *
  * @author John Vardanyan
- * 
+ *
  * Rest Endpoints
- * 06 May 2021
+ * 11 May 2021
  */
 
-
-/**
- * 
- * This method search actress nomated for best actress
- * Can change the year
+/*
+ * Collection Method displays actor/actress names based on category.
  */
 @RestController
 public class EndpointController {
-	// insert year after "year/1997"
-	// eg. /movies/categories/bestpicture/year/1997?year=1950
-	@GetMapping("/categories/bestactress")
-	public Endpoints bestActress(@RequestParam(value = "year",
-	                                           defaultValue = "1997") int year) {		
-		ArrayList<String> names = new ArrayList<String>(); 
-		OscarData.newQueryByCategory("ACTRESS");
-		OscarData.refineByYear(year);
-		ListIterator<Oscar> lt = OscarData.getResults().listIterator();
-		while(lt.hasNext()) {
-			names.add(lt.next().getName());
-		}
-		Endpoints col = new Endpoints(names);
-		col.setYear(year);
-		return col;
-	}
-	/**
-	 * 
-	 * This method search best picture nomination
-	 * can change year
-	 *
-	 */
-	// insert year after "?year=#
-	// eg. /movies/categories/bestpicture?year=1970
-	@RequestMapping("/movies/categories/bestpicture")
-	public Endpoints bestPicture(@RequestParam(value = "year",
-			defaultValue = "1997") int year) {
+	@ResponseBody
+	@GetMapping("/categories/{categoryID}")
+	public Endpoints categories(@PathVariable String categoryID) {
 		ArrayList<String> names = new ArrayList<String>();
-		OscarData.newQueryByCategory("BEST PICTURE");
-		OscarData.refineByYear(year);
+		OscarData.newQueryByCategory(categoryID);
 		ListIterator<Oscar> lt = OscarData.getResults().listIterator();
 		while(lt.hasNext()) {
 			names.add(lt.next().getName());
 		}
 		Endpoints col = new Endpoints(names);
-		col.setYear(year);
 		return col;
 	}
-	/**
-	 * 
-	 * This method search winners of "best picture"
-	 * can change year and category
-	 *
+	/*
+	 * Collection Method displays movie names based on category.
 	 */
-	// insert ?year = # or ?category = ""
-	// eg. /movies/categories/bestpicture?year=1970
-	@GetMapping("/bestpicture/year/1997/winner")
-	public Endpoints winner(
-			@RequestParam(value = "category",
-			defaultValue = "BEST PICTURE") String category,
-			@RequestParam(value = "year",
-			defaultValue = "1964") int year) {
+	@ResponseBody
+	@GetMapping("movies/categories/{categoryID}")
+	public Endpoints movieCategories(@PathVariable String categoryID) {
 		ArrayList<String> names = new ArrayList<String>();
-		OscarData.newQueryByCategory(category);
-		OscarData.refineByYear(year);
-		OscarData.refineByWinner(true);
+		OscarData.newQueryByCategory(categoryID);
+		ListIterator<Oscar> lt = OscarData.getResults().listIterator();
+		while(lt.hasNext()) {
+			names.add(lt.next().getFilm());
+		}
+		Endpoints col = new Endpoints(names);
+		return col;
+	}
+	/*
+	 * Collection Method displays actor/actress names based on category and year.
+	 */
+	@ResponseBody
+	@GetMapping("/categories/{categoryID}/year/{yearID}")
+	public Endpoints categories(@PathVariable("categoryID") String categoryID,
+	                            @PathVariable("yearID") int yearID) {
+		ArrayList<String> names = new ArrayList<String>();
+		OscarData.newQueryByCategory(categoryID);
+		OscarData.refineByYear(yearID);
 		ListIterator<Oscar> lt = OscarData.getResults().listIterator();
 		while(lt.hasNext()) {
 			names.add(lt.next().getName());
 		}
 		Endpoints col = new Endpoints(names);
-		col.setYear(year);
+		col.setYear(yearID);
 		return col;
 	}
-	/**
-	 * 
-	 * This method searches for what you are looking for
-	 * can change year, category and film name
+	/*
+	 * Collection Method displays movie names based on category & year.
+	 */
+	@ResponseBody
+	@GetMapping("movies/categories/{categoryID}/{yearID}")
+	public Endpoints movieCategories(@PathVariable("categoryID") String categoryID,
+	                                 @PathVariable("yearID") int yearID) {
+		ArrayList<String> names = new ArrayList<String>();
+		OscarData.newQueryByCategory(categoryID);
+		OscarData.refineByYear(yearID);
+		ListIterator<Oscar> lt = OscarData.getResults().listIterator();
+		while(lt.hasNext()) {
+			names.add(lt.next().getFilm());
+		}
+		Endpoints col = new Endpoints(names);
+		col.setYear(yearID);
+		return col;
+	}
+	/*
+	 * Singleton Method displays actor/actress names based on category & year & is winner.
+	 */
+	@ResponseBody
+	@GetMapping("/categories/{categoryID}/year/{yearID}/winner")
+	public Endpoints winner(@PathVariable("categoryID") String categoryID,
+	                        @PathVariable("yearID") int yearID){
+		ArrayList<String> names = new ArrayList<String>();
+		OscarData.newQueryByWinner(true);
+		OscarData.refineByCategory(categoryID);
+		OscarData.refineByYear(yearID);
+		ListIterator<Oscar> lt = OscarData.getResults().listIterator();
+		while(lt.hasNext()) {
+			names.add(lt.next().getName());
+		}
+		Endpoints col = new Endpoints(names);
+		col.setYear(yearID);
+		return col;
+	}
+	/*
+	 * Singleton Method displays movie names based on category & year & is winner.
+	 */
+	@ResponseBody
+	@GetMapping("movies/categories/{categoryID}/{yearID}/type/winner")
+	public Endpoints movieWinner(@PathVariable("categoryID") String categoryID,
+	                             @PathVariable("yearID") int yearID){
+		ArrayList<String> names = new ArrayList<String>();
+		OscarData.newQueryByWinner(true);
+		OscarData.refineByCategory(categoryID);
+		OscarData.refineByYear(yearID);
+		ListIterator<Oscar> lt = OscarData.getResults().listIterator();
+		while(lt.hasNext()) {
+			names.add(lt.next().getFilm());
+		}
+		Endpoints col = new Endpoints(names);
+		col.setYear(yearID);
+		return col;
+	}
+	/*
+	 * Query Method displays actor/actress names based on type & year.
 	 */
 	@GetMapping("/search")
-	public Endpoints search(
-			@RequestParam(value = "year",
-			defaultValue = "1997") int year,
-			@RequestParam(value = "category",
-			defaultValue = "DOCUMENTARY (Feature)") String category,
-			@RequestParam(value = "film",
-			defaultValue = "The Long Way Home") String film) {
+	public Endpoints search(@RequestParam(value = "type", defaultValue = "actor") String category,
+	                        @RequestParam(value = "year", defaultValue = "1997") int year) {
 		ArrayList<String> names = new ArrayList<String>();
 		OscarData.newQueryByCategory(category);
 		OscarData.refineByYear(year);
-		OscarData.refineByFilm(film);
 		ListIterator<Oscar> lt = OscarData.getResults().listIterator();
 		while(lt.hasNext()) {
 			names.add(lt.next().getName());
+		}
+		Endpoints col = new Endpoints(names);
+		col.setYear(year);
+		return col;
+	}
+	/*
+	 * Query Method displays movie names based on type & year.
+	 */
+	@GetMapping("movies/search")
+	public Endpoints movieSearch(@RequestParam(value = "type", defaultValue = "actor") String category,
+	                             @RequestParam(value = "year", defaultValue = "1997") int year) {
+		ArrayList<String> names = new ArrayList<String>();
+		OscarData.newQueryByCategory(category);
+		OscarData.refineByYear(year);
+		ListIterator<Oscar> lt = OscarData.getResults().listIterator();
+		while(lt.hasNext()) {
+			names.add(lt.next().getFilm());
 		}
 		Endpoints col = new Endpoints(names);
 		col.setYear(year);
